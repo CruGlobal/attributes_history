@@ -11,22 +11,24 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20_151_219_204_000) do
-  create_table 'contacts', force: :cascade do |t|
-    t.string 'name'
-    t.string 'status'
-    t.decimal 'pledge_amount'
-    t.text 'notes'
-    t.datetime 'created_at',    null: false
-    t.datetime 'updated_at',    null: false
+ActiveRecord::Schema.define(version: 20151219204000) do
+
+  create_table "contacts", force: :cascade do |t|
+    t.string   "name",          null: false
+    t.string   "status",        null: false
+    t.decimal  "pledge_amount"
+    t.text     "notes"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
   end
 
-  create_table 'partner_status_logs', force: :cascade do |t|
-    t.integer 'contact_id'
-    t.date 'versioned_on'
-    t.string 'status'
-    t.decimal 'pledge_amount'
-    t.datetime 'created_at',    null: false
-    t.datetime 'updated_at',    null: false
+  create_table "partner_status_logs", force: :cascade do |t|
+    t.integer  "contact_id"
+    t.date     "versioned_on"
+    t.string   "status"
+    t.decimal  "pledge_amount"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
   end
+
 end

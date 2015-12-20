@@ -9,12 +9,13 @@ Gem::Specification.new do |s|
   s.version     = VersionableByDate::VERSION
   s.authors     = ['draffensperger']
   s.email       = ['d.raffensperger@gmail.com']
-  s.homepage    = 'TODO'
-  s.summary     = 'TODO: Summary of VersionableByDate.'
-  s.description = 'TODO: Description of VersionableByDate.'
+  s.homepage    = 'https://github.com/CruGlobal/versionable_by_date'
+  s.summary     = 'Date-granular versioning for specific model fields (query-friendly history log)'
+  s.description = 'This complements a full audit trail solution by giving a '\
+                  'compact queryable history log for specified fields.'
   s.license     = 'MIT'
 
-  s.files = Dir['{app,config,db,lib}/**/*', 'MIT-LICENSE', 'Rakefile', 'README.rdoc']
+  s.files = Dir['{app,config,db,lib}/**/*', 'MIT-LICENSE', 'Rakefile', 'README.md']
 
   s.add_dependency 'activerecord', ['>= 3.0', '< 6.0']
   s.add_dependency 'activesupport', ['>= 3.0', '< 6.0']

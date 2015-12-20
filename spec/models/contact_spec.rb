@@ -1,13 +1,15 @@
 require 'rails_helper'
+require 'versionable_by_date/rspec'
 
-describe Contact do
-  # around do |example|
-  #   VersionableByDate.enable!
-  #   example.run
-  #   VersionableByDate.disable!
-  # end
+describe Contact, versioning: true do
+  it 'does not make a version if non-versioned fields change' do
+    contact = Contact.create
+    expect do
+      contact.update(name: 'Joe')
+    end.to_not change(PartnerStatusLog, :count)
+  end
 
-  it 'creates a version when relevant fields (status and pledge_amount) change' do
+  it 'creates a version when versioned fields (status,  pledge_amount) change' do
     contact = Contact.create(status: 'Call for Appointment', pledge_amount: nil)
 
     expect do
@@ -33,19 +35,36 @@ describe Contact do
     end.to change(PartnerStatusLog, :count).by(1)
   end
 
-  it 'makes a new version record if change made in a different day' do
+  it 'makes a new version record if change made on a different day' do
+    contact = Contact.create
+    travel_to Time.new(2015, 12, 19) do
+      expect do
+        contact.update(pledge_amount: 10) 
+      end.to change(PartnerStatusLog, :count).by(1)
+    end
+    expect(PartnerStatusLog.last.versioned_on).to eq Date.new(2015, 12, 19)
+
+    travel_to Time.new(2015, 12, 20) do
+      expect do
+        contact.update(pledge_amount: 20) 
+      end.to change(PartnerStatusLog, :count).by(1)
+    end
+    expect(PartnerStatusLog.last.versioned_on).to eq Date.new(2015, 12, 20)
   end
 
-  # it 'does not create a new record when contact update called with same vals' do
-  #   contact = create(:contact, status: 'Partner - Financial',
-  #                    pledge_frequency: 1, pledge_amount: 50)
+  it 'only creates versions if enabled is set to true' do
+    contact = Contact.create
 
-  #   expect do
-  #     contact.update(status: 'Partner - Financial',
-  #                    pledge_frequency: 1, pledge_amount: 50)
-  #   end.to_not change(PartnerStatusLog, :count)
-  # end
+    VersionableByDate.enabled = false
+    expect(VersionableByDate).to_not be_enabled
+    expect do
+      contact.update(pledge_amount: 1)
+    end.to_not change(PartnerStatusLog, :count)
 
-  # it 'does not create a new record when non-partner status fields change' do
-  # end
+    VersionableByDate.enabled = true
+    expect(VersionableByDate).to be_enabled
+    expect do
+      contact.update(pledge_amount: 2)
+    end.to change(PartnerStatusLog, :count).by(1)
+  end
 end

@@ -21,7 +21,7 @@ module VersionableByDate
     private
 
     def save_version_if_changed
-      save_version if versioned_fields_changed?
+      save_version if ::VersionableByDate.enabled? && versioned_fields_changed?
     end
 
     def versioned_fields_changed?

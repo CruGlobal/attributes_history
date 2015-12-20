@@ -1,20 +1,13 @@
-Dir[File.join(File.dirname(__FILE__), 'versionable_by_date', '*.rb')].each do |file|
-  require File.join('versionable_by_date', File.basename(file, '.rb'))
-end
+require 'versionable_by_date/gem_version.rb'
+require 'versionable_by_date/has_versions_by_date.rb'
 
 module VersionableByDate
-  # This allows you to use VersionableByDate.disable! to stop versioning
   class << self
-    def disable!
-      Thread.current[:by_date_versions_disabled] = true
-    end
+    attr_writer :enabled
 
-    def enable!
-      Thread.current[:by_date_versions_disabled] = false
-    end
-
-    def disabled?
-      Thread.current[:by_date_versions_disabled]
+    def enabled?
+      # Enabled by default
+      @enabled.nil? ? true : @enabled
     end
   end
 end

@@ -1,41 +1,26 @@
 require 'active_support'
 
 module VersionableByDate
-  module Model
+  module HasVersionsByDate
     extend ActiveSupport::Concern
 
     module ClassMethods
       # The options should include the keys :attributes and :version_class
       def has_versions_by_date(options)
-        # Set a class-level instance variable for the version options
-        @versions_by_date_options = options
+        class_attribute :versions_by_date_model, :versions_by_date_fields,
+          :versions_by_date_foreign_key
+        self.versions_by_date_model = options[:with_model]
+        self.versions_by_date_fields = options[:for_attributes].map(&:to_s)
+        self.versions_by_date_foreign_key = "#{self.name.underscore}_id"
 
-        include VersionableByDate::Model
+        after_update :save_version_if_changed
+        has_many self.versions_by_date_model.name.underscore.pluralize.to_sym
       end
-
-      def versions_by_date_fields
-        @versions_by_date_fields ||=
-          @versions_by_date_options[:for_attributes].map(&:to_s)
-      end
-
-      def versions_by_date_model
-        @versions_by_date_options[:with_model]
-      end
-
-      def versions_by_date_foreign_key
-        "#{self.name.underscore}_id"
-      end
-    end
-
-    included do
-      after_update :save_version_by_date
-      # has_many versions_by_date_model.name.underscore.pluralize.to_sym
     end
 
     private
 
-    def save_version_by_date
-      # return if VersionableByDate.disabled?
+    def save_version_if_changed
       save_version if versioned_fields_changed?
     end
 

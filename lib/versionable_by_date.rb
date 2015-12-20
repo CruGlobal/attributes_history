@@ -1,5 +1,3 @@
-require "versionable_by_date/version"
-
 Dir[File.join(File.dirname(__FILE__), 'versionable_by_date', '*.rb')].each do |file|
   require File.join('versionable_by_date', File.basename(file, '.rb'))
 end
@@ -22,5 +20,5 @@ module VersionableByDate
 end
 
 ActiveSupport.on_load(:active_record) do
-  include VersionableByDate::Model
+  include VersionableByDate::HasVersionsByDate
 end

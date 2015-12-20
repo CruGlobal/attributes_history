@@ -66,4 +66,51 @@ describe Contact, versioning: true do
       contact.update(pledge_amount: 2)
     end.to change(PartnerStatusLog, :count).by(1)
   end
+
+  it 'allows retrieval of versioned field values' do
+    contact = nil
+    travel_to Time.new(2015, 12, 17) do
+      contact = Contact.create(pledge_amount: 5, status: 'Partner - Financial')
+    end
+    travel_to Time.new(2015, 12, 19) do
+      contact.update(pledge_amount: 10) 
+    end
+    travel_to Time.new(2015, 12, 21) do
+      contact.update(pledge_amount: 20) 
+    end
+
+    # For dates before the first change, return the original value
+
+    # For a time before the object was created, just default to the first value
+    # we have
+
+    days_to_expected_pledge_amounts = {
+      # For the 16th (before the object was created), just default to the first
+      # value for the object
+      16 => 5,
+
+      # On the 17th the object was first created with pledge of 5, and stayed 5
+      # on the 18th.
+      17 => 5,
+      18 => 5,
+
+      # On the 19th it was changed to 10, and stayed that through the 20th
+      19 => 10,
+      20 => 10,
+
+      # On the 21st it was changed to 20
+      21 => 20,
+
+      # For a date after the last change, take the current value
+      22 => 20
+    }
+
+    days_to_expected_pledge_amounts.each do |day, expected_pledge_amount|
+      expect(contact.pledge_amount_on(Date.new(2015, 12, day)))
+        .to eq expected_pledge_amount
+    end
+
+    # Check that status_on also works
+    expect(contact.status_on(Date.new(2015, 12, 19))).to eq 'Partner - Financial'
+  end
 end

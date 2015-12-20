@@ -17,14 +17,23 @@ describe Contact do
     log = PartnerStatusLog.last
     expect(log.status).to eq 'Call for Appointment'
     expect(log.pledge_amount).to be_nil
+  end
+
+  it 're-uses the existing version record if change made in same day' do
+    contact = Contact.create(status: 'Call for Appointment', pledge_amount: nil)
 
     expect do
-      contact.update(pledge_amount: 100)
-    end.to change(PartnerStatusLog, :count).by(1)
+      contact.update(pledge_amount: 50)
+      expect(PartnerStatusLog.last.status).to eq 'Call for Appointment'
+      expect(PartnerStatusLog.last.pledge_amount).to eq nil
 
-    log = PartnerStatusLog.last
-    expect(log.status).to eq 'Partner - Financial'
-    expect(log.pledge_amount).to eq 50
+      contact.update(status: 'Partner - Financial')
+      expect(PartnerStatusLog.last.status).to eq 'Call for Appointment'
+      expect(PartnerStatusLog.last.pledge_amount).to eq nil
+    end.to change(PartnerStatusLog, :count).by(1)
+  end
+
+  it 'makes a new version record if change made in a different day' do
   end
 
   # it 'does not create a new record when contact update called with same vals' do

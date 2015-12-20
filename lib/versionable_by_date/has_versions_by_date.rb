@@ -8,13 +8,13 @@ module VersionableByDate
       # The options should include the keys :attributes and :version_class
       def has_versions_by_date(options)
         class_attribute :versions_by_date_model, :versions_by_date_fields,
-          :versions_by_date_foreign_key
+                        :versions_by_date_foreign_key
         self.versions_by_date_model = options[:with_model]
         self.versions_by_date_fields = options[:for_attributes].map(&:to_s)
-        self.versions_by_date_foreign_key = "#{self.name.underscore}_id"
+        self.versions_by_date_foreign_key = "#{name.underscore}_id"
 
         after_update :save_version_if_changed
-        has_many self.versions_by_date_model.name.underscore.pluralize.to_sym
+        has_many versions_by_date_model.name.underscore.pluralize.to_sym
       end
     end
 
@@ -33,7 +33,10 @@ module VersionableByDate
         self.class.versions_by_date_foreign_key => self[self.class.primary_key],
         versioned_on: Date.current
       )
-      version.update!(version_params)
+
+      # If there is an existing version record for today, just leave it as is,
+      # otherwise, save the newly created one.
+      version.update!(version_params) if version.new_record?
     end
 
     def version_params

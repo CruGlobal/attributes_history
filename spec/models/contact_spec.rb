@@ -1,5 +1,4 @@
 require 'rails_helper'
-require 'versionable_by_date/rspec'
 
 describe Contact, versioning: true do
   it 'does not make a version if non-versioned fields change' do

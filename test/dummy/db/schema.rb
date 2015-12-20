@@ -14,8 +14,8 @@
 ActiveRecord::Schema.define(version: 20151219204000) do
 
   create_table "contacts", force: :cascade do |t|
-    t.string   "name",          null: false
-    t.string   "status",        null: false
+    t.string   "name"
+    t.string   "status"
     t.decimal  "pledge_amount"
     t.text     "notes"
     t.datetime "created_at",    null: false
@@ -23,8 +23,8 @@ ActiveRecord::Schema.define(version: 20151219204000) do
   end
 
   create_table "partner_status_logs", force: :cascade do |t|
-    t.integer  "contact_id"
-    t.date     "versioned_on"
+    t.integer  "contact_id",    null: false
+    t.date     "versioned_on",  null: false
     t.string   "status"
     t.decimal  "pledge_amount"
     t.datetime "created_at",    null: false

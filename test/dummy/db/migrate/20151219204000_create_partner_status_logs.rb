@@ -8,5 +8,8 @@ class CreatePartnerStatusLogs < ActiveRecord::Migration
 
       t.timestamps null: false
     end
+
+    add_index :partner_status_logs, :contact_id
+    add_index :partner_status_logs, :versioned_on
   end
 end

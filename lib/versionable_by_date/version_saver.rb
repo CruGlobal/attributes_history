@@ -1,9 +1,10 @@
 module VersionableByDate
   class VersionSaver
-    def initialize(changed_object, versioned_fields, version_model)
+    def initialize(changed_object)
       @changed_object = changed_object
-      @versioned_fields = versioned_fields
-      @version_model = version_model
+      @versioned_fields = @changed_object.versions_by_date_fields
+      @version_model = @changed_object.versions_by_date_model
+      @versions_association = @changed_object.versions_by_date_association
     end
 
     def save_if_needed
@@ -17,16 +18,12 @@ module VersionableByDate
     end
 
     def save_version
-      version = @changed_object.public_send(versions_association_name)
+      version = @changed_object.public_send(@versions_association)
         .find_or_initialize_by(versioned_on: Date.current)
 
       # If there is an existing version record for today, just leave it as is,
       # otherwise, save the newly created one.
       version.update!(version_params) if version.new_record?
-    end
-
-    def versions_association_name
-      @version_model.name.underscore.pluralize.to_sym
     end
 
     def version_params

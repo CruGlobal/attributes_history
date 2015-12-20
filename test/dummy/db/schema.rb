@@ -31,4 +31,7 @@ ActiveRecord::Schema.define(version: 20151219204000) do
     t.datetime "updated_at",    null: false
   end
 
+  add_index "partner_status_logs", ["contact_id"], name: "index_partner_status_logs_on_contact_id"
+  add_index "partner_status_logs", ["versioned_on"], name: "index_partner_status_logs_on_versioned_on"
+
 end

@@ -55,9 +55,48 @@ class CreatePartnerStatusLogs < ActiveRecord::Migration
       t.string :status
       t.decimal :pledge_amount
     end
+
+    add_index :partner_status_logs, :contact_id
+    add_index :partner_status_logs, :versioned_on
   end
 end
 ```
+
+## Retrieving past values with  `#{versioned_attribute}_on_date` methods
+
+To make retrieving previous values easy, the `versionable_by_date` defines a
+`#{versioned_attribute}_on_date` method for each of your versioned-by-date
+attributes which returns that value on the specified date based on the version
+log.
+
+For instance, in the ministry partner contact history example above, there would
+be methods `status_on_date` and `pledge_amount_on_date` that would return the
+`status` or `pledge_amount` for that given date.
+
+The versioning is granular by date and so it makes the assumption that a change
+any time during a date is effective for the whole of that date. The
+`field_on_date` methods will use caching so if you look up multiple fields on
+the same date only one query will be performed.
+
+## Querying the versions table directly
+
+You can also query the versions table directly. The `versioned_on` field in the
+versions table represents the date that set of attributes was replaced by a new
+set, either in a subsequent version record, or in the object itself.
+
+So to look up the version for a particular date, do a query like this, assuming
+you have a `current_contact_record`:
+```
+current_version = contact.partner_status_logs
+  .where('versioned_on > ?', date).order(:versioned_on).first || contact
+```
+That will give either a `PartnerStatusLog` instance for the past, or the current
+`Contact` instance for the present record, both of which will respond to the
+versioned attributes of `status` and `pledge_frequency`.
+
+This is similar to how [paper_trail](https://github.com/airblade/paper_trail)
+works in that the versions represent past data, and the current versioned record
+represents the current state.
 
 ## Enabling and disabling
 

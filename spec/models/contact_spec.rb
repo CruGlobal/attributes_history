@@ -106,11 +106,12 @@ describe Contact, versioning: true do
     }
 
     days_to_expected_pledge_amounts.each do |day, expected_pledge_amount|
-      expect(contact.pledge_amount_on(Date.new(2015, 12, day)))
+      expect(contact.pledge_amount_on_date(Date.new(2015, 12, day)))
         .to eq expected_pledge_amount
     end
 
     # Check that status_on also works
-    expect(contact.status_on(Date.new(2015, 12, 19))).to eq 'Partner - Financial'
+    expect(contact.status_on_date(Date.new(2015, 12, 19)))
+      .to eq 'Partner - Financial'
   end
 end

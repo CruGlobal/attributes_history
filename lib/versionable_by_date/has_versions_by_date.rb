@@ -18,20 +18,15 @@ module VersionableByDate
           versions_by_date_model.name.underscore.pluralize.to_sym
 
         has_many versions_by_date_model.name.underscore.pluralize.to_sym
-
-        after_update do
-          VersionSaver.new(self, versions_by_date_fields, versions_by_date_model)
-            .save_if_needed
-        end
-
-        setup_attribute_lookup_methods
+        after_update { VersionSaver.new(self).save_if_needed }
+        define_verisons_by_date_lookups
       end
 
       private
 
-      def setup_attribute_lookup_methods
+      def define_verisons_by_date_lookups
         versions_by_date_fields.each do |versioned_field|
-          define_method "#{versioned_field}_on" do |date|
+          define_method "#{versioned_field}_on_date" do |date|
             @version_finder ||= VersionFinder.new(self)
             @version_finder.versioned_field_on(versioned_field, date)
           end

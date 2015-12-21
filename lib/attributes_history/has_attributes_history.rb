@@ -14,7 +14,7 @@ module AttributesHistory
         self.history_attributes = options[:for].map(&:to_s)
         self.history_association = history_model.name.underscore.pluralize.to_sym
 
-        has_many self.history_association
+        has_many history_association
         after_update { HistorySaver.new(self).save_if_needed }
         define_verisons_by_date_lookups
       end

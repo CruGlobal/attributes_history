@@ -38,14 +38,14 @@ describe Contact, versioning: true do
     contact = Contact.create
     travel_to Time.new(2015, 12, 19) do
       expect do
-        contact.update(pledge_amount: 10) 
+        contact.update(pledge_amount: 10)
       end.to change(PartnerStatusLog, :count).by(1)
     end
     expect(PartnerStatusLog.last.recorded_on).to eq Date.new(2015, 12, 19)
 
     travel_to Time.new(2015, 12, 20) do
       expect do
-        contact.update(pledge_amount: 20) 
+        contact.update(pledge_amount: 20)
       end.to change(PartnerStatusLog, :count).by(1)
     end
     expect(PartnerStatusLog.last.recorded_on).to eq Date.new(2015, 12, 20)
@@ -73,10 +73,10 @@ describe Contact, versioning: true do
       contact = Contact.create(pledge_amount: 5, status: 'Partner - Financial')
     end
     travel_to Time.new(2015, 12, 19) do
-      contact.update(pledge_amount: 10) 
+      contact.update(pledge_amount: 10)
     end
     travel_to Time.new(2015, 12, 21) do
-      contact.update(pledge_amount: 20) 
+      contact.update(pledge_amount: 20)
     end
 
     # For dates before the first change, return the original value

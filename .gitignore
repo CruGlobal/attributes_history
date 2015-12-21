@@ -6,3 +6,4 @@ pkg/
 *.log
 test/dummy/tmp/
 test/dummy/.sass-cache
+*.gem

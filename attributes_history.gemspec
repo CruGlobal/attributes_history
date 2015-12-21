@@ -10,9 +10,8 @@ Gem::Specification.new do |s|
   s.authors     = ['draffensperger']
   s.email       = ['d.raffensperger@gmail.com']
   s.homepage    = 'https://github.com/CruGlobal/attributes_history'
-  s.summary     = 'Date-granular history for specific model fields (compact and query-friendly)'
-  s.description = 'This complements a full audit trail solution by giving a '\
-                  'compact queryable history log for specified fields.'
+  s.summary     = 'Date-granular history for specified model fields. Compact & easy to query.'
+  s.description = s.summary
   s.license     = 'MIT'
 
   s.files = Dir['{app,config,db,lib}/**/*', 'MIT-LICENSE', 'Rakefile', 'README.md']

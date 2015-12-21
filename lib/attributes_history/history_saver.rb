@@ -6,7 +6,7 @@ module AttributesHistory
 
     def save_if_needed
       save_history_entry if ::AttributesHistory.enabled? &&
-        history_attributes_changed?
+                            history_attributes_changed?
     end
 
     private
@@ -17,7 +17,7 @@ module AttributesHistory
 
     def save_history_entry
       history_entry = @object.public_send(@object.history_association)
-        .find_or_initialize_by(recorded_on: Date.current)
+                      .find_or_initialize_by(recorded_on: Date.current)
 
       # If there is an existing history record for today, just leave it as is,
       # otherwise, save the newly initialized one.

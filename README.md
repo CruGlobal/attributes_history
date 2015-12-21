@@ -1,6 +1,8 @@
 # AttributesHistory
 
-Provides date-granular easy to query history for specific fields on your models.
+Date-granular history for specified model fields. Compact & easy to query.
+
+[![Build Status](https://travis-ci.org/CruGlobal/attributes_history.svg)](https://travis-ci.org/CruGlobal/attributes_history)
 
 ## Usage
 

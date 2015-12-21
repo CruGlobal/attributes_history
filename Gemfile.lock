@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    attributes_history (0.0.1)
+    attributes_history (0.0.2)
       activerecord (>= 3.0, < 6.0)
       activesupport (>= 3.0, < 6.0)
 

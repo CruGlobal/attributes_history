@@ -36,14 +36,14 @@ describe Contact, versioning: true do
 
   it 'makes a new version record if change made on a different day' do
     contact = Contact.create
-    travel_to Time.new(2015, 12, 19) do
+    travel_to Date.new(2015, 12, 19) do
       expect do
         contact.update(pledge_amount: 10)
       end.to change(PartnerStatusLog, :count).by(1)
     end
     expect(PartnerStatusLog.last.recorded_on).to eq Date.new(2015, 12, 19)
 
-    travel_to Time.new(2015, 12, 20) do
+    travel_to Date.new(2015, 12, 20) do
       expect do
         contact.update(pledge_amount: 20)
       end.to change(PartnerStatusLog, :count).by(1)
@@ -69,13 +69,13 @@ describe Contact, versioning: true do
 
   it 'allows retrieval of versioned field values' do
     contact = nil
-    travel_to Time.new(2015, 12, 17) do
+    travel_to Date.new(2015, 12, 17) do
       contact = Contact.create(pledge_amount: 5, status: 'Partner - Financial')
     end
-    travel_to Time.new(2015, 12, 19) do
+    travel_to Date.new(2015, 12, 19) do
       contact.update(pledge_amount: 10)
     end
-    travel_to Time.new(2015, 12, 21) do
+    travel_to Date.new(2015, 12, 21) do
       contact.update(pledge_amount: 20)
     end
 
@@ -113,5 +113,30 @@ describe Contact, versioning: true do
     # Check that status_on also works
     expect(contact.status_on_date(Date.new(2015, 12, 19)))
       .to eq 'Partner - Financial'
+  end
+
+  it 'works for a second history association on the class' do
+    contact = nil
+
+    travel_to Date.new(2015, 12, 19) do
+      contact = Contact.create
+      expect do
+        contact.update(notes: 'test', pledge_amount: 10)
+      end.to change(PartnerStatusLog, :count).by(1)
+        .and change(ContactNotesLog, :count).by(1)
+    end
+
+    travel_to Date.new(2015, 12, 20) do
+      expect do
+        contact.update(notes: 'test2')
+      end.to change(ContactNotesLog, :count).by(1)
+        .and change(PartnerStatusLog, :count).by(0)
+    end
+
+    expect(contact.notes_on_date(Date.new(2015, 12, 19))).to eq 'test'
+    expect(contact.notes_on_date(Date.new(2015, 12, 20))).to eq 'test2'
+
+    expect(contact.pledge_amount_on_date(Date.new(2015, 12, 19))).to eq 10
+    expect(contact.pledge_amount_on_date(Date.new(2015, 12, 20))).to eq 10
   end
 end

@@ -1,7 +1,9 @@
 module AttributesHistory
   class HistorySaver
-    def initialize(changed_object)
+    def initialize(changed_object, history_attributes, history_model)
       @object = changed_object
+      @history_attributes = history_attributes
+      @history_model = history_model
     end
 
     def save_if_needed
@@ -12,11 +14,14 @@ module AttributesHistory
     private
 
     def history_attributes_changed?
-      (@object.changed & @object.history_attributes).present?
+      (@object.changed & @history_attributes).present?
     end
 
     def save_history_entry
-      history_entry = @object.public_send(@object.history_association)
+      history_association =
+        @object.class.history_association(@history_attributes.first)
+
+      history_entry = @object.public_send(history_association)
                       .find_or_initialize_by(recorded_on: Date.current)
 
       # If there is an existing history record for today, just leave it as is,
@@ -25,7 +30,7 @@ module AttributesHistory
     end
 
     def history_params
-      Hash[@object.history_attributes.map { |f| [f, history_value_for(f)] }]
+      Hash[@history_attributes.map { |f| [f, history_value_for(f)] }]
     end
 
     def history_value_for(attribute)

@@ -11,7 +11,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20_151_219_204_000) do
+ActiveRecord::Schema.define(version: 20_151_221_145_439) do
+  create_table 'contact_notes_logs', force: :cascade do |t|
+    t.integer 'contact_id', null: false
+    t.date 'recorded_on', null: false
+    t.string 'notes'
+    t.datetime 'created_at',  null: false
+    t.datetime 'updated_at',  null: false
+  end
+
   create_table 'contacts', force: :cascade do |t|
     t.string 'name'
     t.string 'status'

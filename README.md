@@ -96,6 +96,24 @@ This is similar to how [paper_trail](https://github.com/airblade/paper_trail)
 works in that the versions represent past data, and only the current regular
 model record (contact in this case) has the current state.
 
+## Multiple `has_attributes_history` calls per class
+
+If you want to have some attributes (or groups of attributes) stored in
+different tables grouped by semantic meaning or because their size or rate of
+change is different, you can specify multiple `has_attributes_history` calls per
+class. The lists of attributes for the different calls can't have any
+overlapping attributes though or that will confuse the lookup logic.
+
+Here's an example of tracking `notes` in a separate log from `status` and
+`pledge`:
+
+```
+class Contact < ActiveRecord::Base
+  has_attributes_history for: [:status, :pledge], with_model: PartnerStatusLog
+  has_attributes_history for: [:notes], with_model: ContactNotesLog
+end
+```
+
 ## Enabling and disabling
 
 By default the history logging is enabled once you set it up, but you can

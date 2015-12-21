@@ -9,7 +9,7 @@ require 'sprockets/railtie'
 # require "rails/test_unit/railtie"
 
 Bundler.require(*Rails.groups)
-require 'versionable_by_date'
+require 'attributes_history'
 
 module Dummy
   class Application < Rails::Application

@@ -41,27 +41,27 @@ describe Contact, versioning: true do
         contact.update(pledge_amount: 10) 
       end.to change(PartnerStatusLog, :count).by(1)
     end
-    expect(PartnerStatusLog.last.versioned_on).to eq Date.new(2015, 12, 19)
+    expect(PartnerStatusLog.last.recorded_on).to eq Date.new(2015, 12, 19)
 
     travel_to Time.new(2015, 12, 20) do
       expect do
         contact.update(pledge_amount: 20) 
       end.to change(PartnerStatusLog, :count).by(1)
     end
-    expect(PartnerStatusLog.last.versioned_on).to eq Date.new(2015, 12, 20)
+    expect(PartnerStatusLog.last.recorded_on).to eq Date.new(2015, 12, 20)
   end
 
   it 'only creates versions if enabled is set to true' do
     contact = Contact.create
 
-    VersionableByDate.enabled = false
-    expect(VersionableByDate).to_not be_enabled
+    AttributesHistory.enabled = false
+    expect(AttributesHistory).to_not be_enabled
     expect do
       contact.update(pledge_amount: 1)
     end.to_not change(PartnerStatusLog, :count)
 
-    VersionableByDate.enabled = true
-    expect(VersionableByDate).to be_enabled
+    AttributesHistory.enabled = true
+    expect(AttributesHistory).to be_enabled
     expect do
       contact.update(pledge_amount: 2)
     end.to change(PartnerStatusLog, :count).by(1)

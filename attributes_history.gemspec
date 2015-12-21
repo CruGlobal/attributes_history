@@ -1,16 +1,16 @@
 $LOAD_PATH.push File.expand_path('../lib', __FILE__)
 
 # Maintain your gem's version:
-require 'versionable_by_date/gem_version'
+require 'attributes_history/gem_version'
 
 # Describe your gem and declare its dependencies:
 Gem::Specification.new do |s|
-  s.name        = 'versionable_by_date'
-  s.version     = VersionableByDate::VERSION
+  s.name        = 'attributes_history'
+  s.version     = AttributesHistory::VERSION
   s.authors     = ['draffensperger']
   s.email       = ['d.raffensperger@gmail.com']
-  s.homepage    = 'https://github.com/CruGlobal/versionable_by_date'
-  s.summary     = 'Date-granular versioning for specific model fields (query-friendly history log)'
+  s.homepage    = 'https://github.com/CruGlobal/attributes_history'
+  s.summary     = 'Date-granular history for specific model fields (compact and query-friendly)'
   s.description = 'This complements a full audit trail solution by giving a '\
                   'compact queryable history log for specified fields.'
   s.license     = 'MIT'

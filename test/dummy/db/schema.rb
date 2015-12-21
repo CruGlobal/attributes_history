@@ -24,7 +24,7 @@ ActiveRecord::Schema.define(version: 20151219204000) do
 
   create_table "partner_status_logs", force: :cascade do |t|
     t.integer  "contact_id",    null: false
-    t.date     "versioned_on",  null: false
+    t.date     "recorded_on",   null: false
     t.string   "status"
     t.decimal  "pledge_amount"
     t.datetime "created_at",    null: false
@@ -32,6 +32,6 @@ ActiveRecord::Schema.define(version: 20151219204000) do
   end
 
   add_index "partner_status_logs", ["contact_id"], name: "index_partner_status_logs_on_contact_id"
-  add_index "partner_status_logs", ["versioned_on"], name: "index_partner_status_logs_on_versioned_on"
+  add_index "partner_status_logs", ["recorded_on"], name: "index_partner_status_logs_on_recorded_on"
 
 end

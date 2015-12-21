@@ -1,33 +1,29 @@
-# VersionableByDate
+# AttributesHistory
 
-Provides date-granular versioning for specific fields on your models
-(query-friendly history log).
+Provides date-granular easy to query history for specific fields on your models.
 
 ## Usage
 
 Include the gem: 
 
-`gem 'versionable_by_date'`
+`gem 'attributes_history'`
 
-Call `has_versions_by_date` in your model with the option `for_attributes` to
-specify the attributes you want to version and `with_model` to specify the
-versions model.
-
-The versions model should have fields that match your `for_attributes` fields,
-`versioned_on` field for the date, and a foreign key field to link back to your
-versioned model.
+Call `has_attributes_history for: [attributes], with_model: AttributesLog` where
+`attributes` are the ones you want to track and `AttributesLog` will contain the
+history entries. Your `AttributesLog` model should have a field `recorded_on`
+which tracks the date when those attributes changed to the values in the next
+recorded entry (or to the current attribute values).
 
 ## Example
 
-Here's an example of how you could track the `status` and `pledge_amount` fields
+Here's an example of how you could track the `status` and `pledge` fields
 for a ministry donor contact in a `PartnerStatusLog` table. This would then allow
 you to easily query the ministry partner's status and commitment information
 over time.
 
 ```
 class Contact < ActiveRecord::Base
-  has_versions_by_date for_attributes: [:status, :pledge_amount],
-                       with_model: PartnerStatusLog
+  has_attributes_history for: [:status, :pledge], with_model: PartnerStatusLog
 end
 ```
 
@@ -42,7 +38,7 @@ class CreateContacts < ActiveRecord::Migration
     create_table :contacts do |t|
       t.string :name
       t.string :status
-      t.decimal :pledge_amount
+      t.decimal :pledge
     end
   end
 end
@@ -51,68 +47,69 @@ class CreatePartnerStatusLogs < ActiveRecord::Migration
   def change
     create_table :partner_status_logs do |t|
       t.integer :contact_id, null: false
-      t.date :versioned_on, null: false
+      t.date :recorded_on, null: false
       t.string :status
-      t.decimal :pledge_amount
+      t.decimal :pledge
     end
 
     add_index :partner_status_logs, :contact_id
-    add_index :partner_status_logs, :versioned_on
+    add_index :partner_status_logs, :recorded_on
   end
 end
 ```
 
-## Retrieving past values with  `#{versioned_attribute}_on_date` methods
+## Retrieving past values with  `attribute_on_date` methods
 
-To make retrieving previous values easy, the `versionable_by_date` defines a
-`#{versioned_attribute}_on_date` method for each of your versioned-by-date
-attributes which returns that value on the specified date based on the version
-log.
+To make retrieving previous values easy, `attributes_history` defines an
+`attribute_on_date(attribute, date)` method, as well as specific 
+`#{attribute}_on_date` method for each of your histroy-tracked attributes
+which returns that value on the specified date based on the log.
 
-For instance, in the ministry partner contact history example above, there would
-be methods `status_on_date` and `pledge_amount_on_date` that would return the
-`status` or `pledge_amount` for that given date.
+For instance, in the ministry partner history example, there would
+be methods `status_on_date` and `pledge_on_date` that would return the
+`status` or `pledge` for a contact for that given date. You could also call
+`attribute_on_date(:pledge, date)` to get the pledge value for a given date.
 
-The versioning is granular by date and so it makes the assumption that a change
+The log is granular by date and so it makes the assumption that a change
 any time during a date is effective for the whole of that date. The
-`field_on_date` methods will use caching so if you look up multiple fields on
+`attribute_on_date` methods will use caching so if you look up multiple fields on
 the same date only one query will be performed.
 
-## Querying the versions table directly
+## Querying the log table directly
 
-You can also query the versions table directly. The `versioned_on` field in the
-versions table represents the date that set of attributes was replaced by a new
-set, either in a subsequent version record, or in the object itself.
+You can also query the history log table directly. The `recorded_on` field in the
+table represents the date that set of attributes was replaced by a new
+set, either in a subsequent history record, or in the object itself.
 
-So to look up the version for a particular date, do a query like this, assuming
-you have a `current_contact_record`:
+So to look up the version for a particular date, do a query like this:
 ```
 current_version = contact.partner_status_logs
-  .where('versioned_on > ?', date).order(:versioned_on).first || contact
+  .where('recorded_on > ?', date).order(:recorded_on).first || contact
 ```
 That will give either a `PartnerStatusLog` instance for the past, or the current
 `Contact` instance for the present record, both of which will respond to the
-versioned attributes of `status` and `pledge_frequency`.
+history-tracked attributes of `status` and `pledge`.
 
 This is similar to how [paper_trail](https://github.com/airblade/paper_trail)
-works in that the versions represent past data, and the current versioned record
-represents the current state.
+works in that the versions represent past data, and only the current regular
+model record (contact in this case) has the current state.
 
 ## Enabling and disabling
 
-By default the versioning is enabled once you set it up, but you can disable it
-by setting `VersionableByDate.enabled = false` (and reset it back to `true`
-also).
+By default the history logging is enabled once you set it up, but you can
+disable it by setting `AttributesHistory.enabled = false` (and reset it back to
+`true` also).
 
 ## Testing with RSpec
 
-For testing with RSpec, you can `require 'versionable_by_date/rspec'` which will
-disable versioning by default in your specs unless you specify `versioning: true`
-in the spec metadata, or you explicitly set `VersionableByDate.enabled = true`.
+For testing with RSpec, you can `require 'attributes_history/rspec'` which will
+disable attribute history by default in your specs unless you specify
+`versioning: true` in the spec metadata, or you explicitly set
+`AttributesHistory.enabled = true`.
 
-## How it complements a full audit trail (more compact, easier querying)
+## Designed to complement (not replace) a full audit trail
 
-This is designed to complement a full audit trail solution like
+This is intended to augment a full audit trail solution like
 [paper_trail](https://github.com/airblade/paper_trail). The advantage of a full
 audit trail is that you track every change in a consistent way across models.
 
@@ -120,12 +117,20 @@ But it's possible for the full audit trail to become large and it's often stored
 a less easily queryable way (object data stored in a generic `object` field as
 YAML/JSON).
 
-This `versionable_by_date` gem allows you to choose a subset of fields for a
-particular model that will be versioned with at most one new version per day (to
-limit growth and make time-series displaying of the versions easier), and is
+If you use auto-saving or make single attribute changes easy, then you may get a
+lot of updates in the same day which semantically represent a single update.
+
+This `attributes_history` gem allows you to choose a subset of fields for a
+particular model that will be tracked with at most one new version per day to
+limit growth and make time-series displaying of the versions easier. And is
 designed to store the versions in specialized table(s) per model with fields that
-parallel those in the model itself.
+parallel those in the model itself so you can more easily query the historical
+fields.
 
-## License
+## Acknowledgement and License
 
-MIT Licensed.
+Credit to [Spencer Oberstadt](https://github.com/soberstadt) for coming up with
+the idea of versioning our partner status log with date level granularity to
+keep it compact and easy to query.
+
+AttributesHistory is [MIT Licensed](https://github.com/CruGlobal/attributes_history/blob/master/MIT-LICENSE).

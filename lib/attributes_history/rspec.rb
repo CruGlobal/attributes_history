@@ -2,10 +2,10 @@ require 'rspec/core'
 
 RSpec.configure do |config|
   config.before(:each) do
-    ::VersionableByDate.enabled = false
+    ::AttributesHistory.enabled = false
   end
 
   config.before(:each, versioning: true) do
-    ::VersionableByDate.enabled = true
+    ::AttributesHistory.enabled = true
   end
 end

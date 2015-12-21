@@ -1,7 +1,7 @@
-require 'versionable_by_date/gem_version.rb'
-require 'versionable_by_date/has_versions_by_date.rb'
+require 'attributes_history/gem_version.rb'
+require 'attributes_history/has_attributes_history.rb'
 
-module VersionableByDate
+module AttributesHistory
   class << self
     attr_writer :enabled
 
@@ -13,5 +13,5 @@ module VersionableByDate
 end
 
 ActiveSupport.on_load(:active_record) do
-  include VersionableByDate::HasVersionsByDate
+  include AttributesHistory::HasAttributesHistory
 end

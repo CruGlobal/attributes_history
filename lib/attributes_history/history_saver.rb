@@ -14,7 +14,7 @@ module AttributesHistory
     private
 
     def history_attributes_changed?
-      (@object.saved_changes.keys & @history_attributes).present?
+      (changes.keys & @history_attributes).present?
     end
 
     def save_history_entry
@@ -35,10 +35,18 @@ module AttributesHistory
 
     def history_value_for(attribute)
       # Use the previous value if it was changed, otherwise the current value
-      if @object.saved_changes[attribute.to_s]
-        @object.saved_changes[attribute].first
+      if changes[attribute]
+        changes[attribute].first
       else
         @object.public_send(attribute)
+      end
+    end
+
+    def changes
+      if Gem::Version.new(Rails.version) >= Gem::Version.new('5.1.0')
+        @object.saved_changes
+      else
+        @object.changes
       end
     end
   end

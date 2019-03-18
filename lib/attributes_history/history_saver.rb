@@ -14,7 +14,7 @@ module AttributesHistory
     private
 
     def history_attributes_changed?
-      (@object.changed & @history_attributes).present?
+      (@object.saved_changes.keys & @history_attributes).present?
     end
 
     def save_history_entry
@@ -35,8 +35,8 @@ module AttributesHistory
 
     def history_value_for(attribute)
       # Use the previous value if it was changed, otherwise the current value
-      if attribute.in?(@object.changed)
-        @object.changes[attribute].first
+      if @object.saved_changes[attribute.to_s]
+        @object.saved_changes[attribute].first
       else
         @object.public_send(attribute)
       end

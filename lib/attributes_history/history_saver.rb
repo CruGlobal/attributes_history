@@ -22,7 +22,7 @@ module AttributesHistory
         @object.class.history_association(@history_attributes.first)
 
       history_entry = @object.public_send(history_association)
-                      .find_or_initialize_by(recorded_on: Date.current)
+                             .find_or_initialize_by(recorded_on: Date.current)
 
       # If there is an existing history record for today, just leave it as is,
       # otherwise, save the newly initialized one.

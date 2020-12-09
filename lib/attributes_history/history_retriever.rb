@@ -9,7 +9,7 @@ module AttributesHistory
       history_association = @object.class.history_association(attribute)
 
       history_entry = @cached_history[[history_association, date]] ||=
-        find_entry_on(history_association, date)
+                        find_entry_on(history_association, date)
 
       history_entry.public_send(attribute)
     end
@@ -18,7 +18,7 @@ module AttributesHistory
 
     def find_entry_on(history_association, date)
       @object.public_send(history_association)
-        .where('recorded_on > ?', date).order(:recorded_on).first || @object
+             .where('recorded_on > ?', date).order(:recorded_on).first || @object
     end
   end
 end

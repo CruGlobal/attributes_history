@@ -46,7 +46,7 @@ module AttributesHistory
       def setup_history_callback(history_attributes, history_model)
         after_update do
           HistorySaver.new(self, history_attributes, history_model)
-            .save_if_needed
+                      .save_if_needed
         end
       end
 

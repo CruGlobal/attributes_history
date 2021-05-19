@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreatePartnerStatusLogs < ActiveRecord::Migration
   def change
     create_table :partner_status_logs do |t|

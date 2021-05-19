@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateContactNotesLog < ActiveRecord::Migration
   def change
     create_table :contact_notes_logs do |t|

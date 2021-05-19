@@ -17,9 +17,6 @@ jobs:
       with:
         bundler-cache: true
         
-    - name: Install bundle
-      run: bundle install --jobs 4 --retry 3
-      
     - name: Setup database
       run: (cd test/dummy && bundle exec rails db:setup)
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module AttributesHistory
   class HistoryRetriever
     def initialize(object)

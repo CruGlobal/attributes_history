@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'attributes_history/gem_version.rb'
 require 'attributes_history/has_attributes_history.rb'
 

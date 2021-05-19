@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module AttributesHistory
   class HistorySaver
     def initialize(changed_object, history_attributes, history_model)

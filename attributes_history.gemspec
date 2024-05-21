@@ -18,13 +18,13 @@ Gem::Specification.new do |s|
 
   s.files = Dir['{app,config,db,lib}/**/*', 'MIT-LICENSE', 'Rakefile', 'README.md']
 
-  s.add_dependency 'activerecord', ['>= 3.0', '< 6.2']
-  s.add_dependency 'activesupport', ['>= 3.0', '< 6.2']
+  s.add_dependency 'activerecord', ['>= 3.0', '< 8.0']
+  s.add_dependency 'activesupport', ['>= 3.0', '< 8.0']
 
   s.add_development_dependency 'pry'
   s.add_development_dependency 'pry-byebug'
   s.add_development_dependency 'rails', '~> 7.0'
   s.add_development_dependency 'rspec-rails', '~> 3.8.0'
   s.add_development_dependency 'rubocop', '~> 0.61.0'
-  s.add_development_dependency 'sqlite3'
+  s.add_development_dependency 'sqlite3', '~> 1.7'
 end

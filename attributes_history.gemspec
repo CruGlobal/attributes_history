@@ -25,6 +25,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'pry-byebug'
   s.add_development_dependency 'rails', '~> 7.0'
   s.add_development_dependency 'rspec-rails', '~> 7.1'
-  s.add_development_dependency 'rubocop', '~> 0.61.0'
+  s.add_development_dependency 'rubocop', '~> 1.60'
   s.add_development_dependency 'sqlite3', '~> 1.7'
 end

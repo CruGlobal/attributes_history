@@ -1,9 +1,9 @@
 PATH
   remote: .
   specs:
-    attributes_history (0.2.0)
-      activerecord (>= 3.0, < 8.0)
-      activesupport (>= 3.0, < 8.0)
+    attributes_history (0.2.1)
+      activerecord (>= 3.0, < 9)
+      activesupport (>= 3.0, < 9)
 
 GEM
   remote: https://rubygems.org/
